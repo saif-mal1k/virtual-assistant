@@ -43,7 +43,7 @@ def listen_input():
                 #with open("speechToText/"+fileName+".mp3", "wb") as f:
                 #    f.write(audio.get_wav_data())
                 # return audioToText
-                print(text)  #"You:>> "
+                #print(text)  #"You:>> "
                 return str(text)
         except Exception as e:
             #print(e)
@@ -51,3 +51,7 @@ def listen_input():
             return "NONE"
 
 
+
+if __name__ == "__main__":
+    ans = listen_input() 
+    print(ans)
