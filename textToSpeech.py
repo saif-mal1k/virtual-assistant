@@ -1,3 +1,8 @@
+import tempfile
+import os
+from playsound import playsound
+
+
 # offline text to speech
 import pyttsx3
 
@@ -6,10 +11,6 @@ import gtts
 
 # check internet connection
 import urllib3
-
-import tempfile
-import os
-import playsound
 
 
 # check internet connection
@@ -40,7 +41,7 @@ def speak(text):
             tmp.close()
             tts.save(tmp.name + '.mp3')
             # play tmp file
-            playsound.playsound(tmp.name + '.mp3')
+            playsound(tmp.name + '.mp3')
             # delete tmp file
             os.remove(tmp.name + '.mp3')
         else:
@@ -55,3 +56,7 @@ def speak(text):
         return True
     except:
         return False
+
+
+if __name__=="__main__":
+    speak("hellow, may i help you?")
