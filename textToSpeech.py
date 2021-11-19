@@ -1,6 +1,6 @@
 import tempfile
-import os
-from playsound import playsound
+
+from playsound import playsound 
 
 
 # offline text to speech
@@ -37,13 +37,15 @@ def speak(text):
             # online text to speech
             tts = gtts.gTTS(text=text, lang='en')
             # save to tmp file
-            tmp = tempfile.NamedTemporaryFile(delete=False)
-            tmp.close()
-            tts.save(tmp.name + '.mp3')
+            tmp = tempfile.NamedTemporaryFile()
+            temporaryfilename = tmp.name + '.mp3'
+                        
+            tts.save(temporaryfilename)
             # play tmp file
-            playsound(tmp.name + '.mp3')
-            # delete tmp file
-            os.remove(tmp.name + '.mp3')
+            playsound(temporaryfilename)
+            # remove tmp file
+            tmp.close()
+
         else:
             # offline text to speech
             engine = pyttsx3.init()
@@ -54,9 +56,12 @@ def speak(text):
             engine.runAndWait()
 
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
 
 
 if __name__=="__main__":
     speak("hellow, may i help you?")
+    print(".................................")
+    speak("how to help you")
