@@ -71,7 +71,7 @@ def resolve_command(command):
 
     if internet_check() == False:
         print("me<<: No internet connection !!!")
-        return None
+        return "No internet"
     else:
         pass
 

@@ -17,13 +17,16 @@ if __name__=="__main__":
             # get command from user and resolve it
             command = listen_input()
 
-            if command == "exit":
+            if command == "exit" or command == "okay bye":
                 speak("Bye, Saif. See you soon!")
                 break
 
             output = resolveCommand.resolve_command(command)
 
-            if output == None:
+            if output == "No internet":
+                speak("sorry, my brain, needs internet power. please connect me to internet")
+
+            elif output == None:
                 speak("I can't understand you. Please try again.")
 
             elif output == True:
