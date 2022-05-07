@@ -8,8 +8,8 @@ import resolveCommand
 #very useful especially when you have this module imported in another
 if __name__=="__main__":
     try:
-        speak("Hello, Saif. How you doing!")
-        speak("I am your personal assistant. How can I help you?")
+        speak("Hello Sir. How you doing!")
+        speak("I am a virtual assistant. may I help you?")
 
 
         while(True):
@@ -18,7 +18,7 @@ if __name__=="__main__":
             command = listen_input()
 
             if command == "exit" or command == "okay bye":
-                speak("Bye, Saif. See you soon!")
+                speak("Bye, Sir. See you soon!")
                 break
 
             output = resolveCommand.resolve_command(command)
@@ -50,7 +50,6 @@ if __name__=="__main__":
                     print(line)
                     done = speak(line)
         
-        print("thanks, nice to chat with you")
 
     except Exception as e:
         exit()

@@ -1,9 +1,9 @@
 import urllib3   # i need to cheange it but, right now making its use to check internet
 
-# wikipedia
+# wikipedia search person, place or thing
 import wikipedia 
 
-# wiki how
+# wiki how to perform certain task or activity
 import whapi
 
 import textToSpeech
@@ -84,11 +84,14 @@ def resolve_command(command):
         output = find_on_wikihow(command)
         pass
 
+    elif "exit" in command or "okay bye" in command:
+        exit()
+
 
 
 if __name__ == "__main__":
     print(find_on_wikipedia("what is a computer"))
-    print(find_on_wikipedia("where is the Eiffel Tower"))
+    #print(find_on_wikipedia("where is the Eiffel Tower"))
     print(find_on_wikipedia("who is the president of the United States"))
     print(find_on_wikihow("how to become a pilot"))
     
