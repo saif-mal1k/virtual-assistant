@@ -8,8 +8,6 @@ import whapi
 
 import textToSpeech
 
-
-
 #check if internet is connected
 def internet_check():
     http = urllib3.PoolManager()

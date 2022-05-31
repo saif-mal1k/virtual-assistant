@@ -3,28 +3,25 @@ from speechToText import listen_input
 
 import resolveCommand
 
-
-
 #very useful especially when you have this module imported in another
 if __name__=="__main__":
     try:
-        speak("Hello Sir. How you doing!")
+        speak("Hello, Sir. How you doing!")
         speak("I am a virtual assistant. may I help you?")
-
 
         while(True):
             print("enter command")
             # get command from user and resolve it
             command = listen_input()
 
-            if command == "exit" or command == "okay bye":
-                speak("Bye, Sir. See you soon!")
+            if command == "exit" or command == "okay bye" or command == "ok by":
+                speak("Bye Sir. See you soon!")
                 break
 
             output = resolveCommand.resolve_command(command)
 
             if output == "No internet":
-                speak("sorry, my brain, needs internet power. please connect me to internet")
+                speak("sorry, please connect me to internet")
 
             elif output == None:
                 speak("I can't understand you. Please try again.")
@@ -49,7 +46,6 @@ if __name__=="__main__":
                 for line in output:
                     print(line)
                     done = speak(line)
-        
 
     except Exception as e:
         exit()
