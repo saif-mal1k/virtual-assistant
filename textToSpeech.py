@@ -62,6 +62,6 @@ def speak(text):
 
 # unit testing
 if __name__=="__main__":
-    speak("aapka naam kya hai?")
+    speak("आपका नाम क्या है?")
     print(".................................")
     speak("may I help you")
