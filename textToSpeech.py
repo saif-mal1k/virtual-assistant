@@ -35,7 +35,7 @@ def speak(text):
         # if internet on
         if internet_on():
             # online text to speech
-            tts = gtts.gTTS(text=text, lang='en')
+            tts = gtts.gTTS(text=text, lang='en', slow=False, lang_check=True)
             # save to tmp file
             tmp = tempfile.NamedTemporaryFile()
             temporaryfilename = tmp.name + '.mp3'
@@ -60,8 +60,8 @@ def speak(text):
         print(e)
         return False
 
-
+# unit testing
 if __name__=="__main__":
-    speak("hellow, may i help you?")
+    speak("aapka naam kya hai?")
     print(".................................")
-    speak("how to help you")
+    speak("may I help you")

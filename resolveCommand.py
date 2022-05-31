@@ -8,6 +8,29 @@ import whapi
 
 import textToSpeech
 
+import timer
+
+import math
+
+
+def basicOperations(text):
+	if 'root' in text:
+		temp = text.rfind(' ')
+		num = int(text[temp+1:])
+		return round(math.sqrt(num), 2)
+
+	text = text.replace('plus', '+')
+	text = text.replace('minus', '-')
+	text = text.replace('x', '*')
+	text = text.replace('multiplied by', '*')
+	text = text.replace('multiply', '*')
+	text = text.replace('divided by', '/')
+	text = text.replace('to the power', '**')
+	text = text.replace('power', '**')
+	result = eval(text)
+	return round(result, 2)
+
+
 #check if internet is connected
 def internet_check():
     http = urllib3.PoolManager()
@@ -73,10 +96,18 @@ def resolve_command(command):
     else:
         pass
 
-    if "what" in command or "where" in command or "who" in command:
+    if "what is" in command:
+       	for word in ["plus", "minus", "by", "multiplied by", "multiply", "divided by", "to the power", "power"]:
+            if word in command:
+                command = command.replace("what is", "")
+                return basicOperations(command)
+                
+    elif "what" in command or "where" in command or "who" in command:
         output = find_on_wikipedia(command)
         return output
 
+    elif "set a timer for" in command:
+        timer.startTimer(command)
 
     elif "how" in command or "how to" in command:
         output = find_on_wikihow(command)
@@ -87,7 +118,9 @@ def resolve_command(command):
 
 
 
+
 if __name__ == "__main__":
+    print(resolve_command("what is 1 plus 1"))
     print(find_on_wikipedia("what is a computer"))
     #print(find_on_wikipedia("where is the Eiffel Tower"))
     print(find_on_wikipedia("who is the president of the United States"))

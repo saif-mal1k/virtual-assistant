@@ -15,13 +15,13 @@ if __name__=="__main__":
             command = listen_input()
 
             if command == "exit" or command == "okay bye" or command == "ok by":
-                speak("Bye Sir. See you soon!")
+                speak("Bye Sir, See you soon!")
                 break
 
             output = resolveCommand.resolve_command(command)
 
             if output == "No internet":
-                speak("sorry, please connect me to internet")
+                speak("please connect to internet")
 
             elif output == None:
                 speak("I can't understand you. Please try again.")
