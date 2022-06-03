@@ -27,7 +27,7 @@
 ## example comands
 
 1. set a timer for 5 minutes
-2. who is modi
+2. who is Narendra modi
 3. how to become engineer
 4. what is 2 multiply 4
 5. search Narendra Modi on google
@@ -36,7 +36,7 @@
 8. open google chrome
 
 9. some simple queries
-    - age of salman khan
+    - age of milky way
     - height of mount everest
     - when was Aryabhatta born
     - prime minister of india

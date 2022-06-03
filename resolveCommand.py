@@ -13,27 +13,7 @@ import textToSpeech
 #personally created
 import timer
 import webOpen
-
-
-import math
-
-
-def basicOperations(text):
-	if 'root' in text:
-		temp = text.rfind(' ')
-		num = int(text[temp+1:])
-		return round(math.sqrt(num), 2)
-
-	text = text.replace('plus', '+')
-	text = text.replace('minus', '-')
-	text = text.replace('x', '*')
-	text = text.replace('multiplied by', '*')
-	text = text.replace('multiply', '*')
-	text = text.replace('divided by', '/')
-	text = text.replace('to the power', '**')
-	text = text.replace('power', '**')
-	result = eval(text)
-	return round(result, 2)
+import perform_math
 
 
 #check if internet is connected
@@ -45,6 +25,13 @@ def internet_check():
     except:
         return False
 
+
+# check if command can be resolved by perform math
+def check_for_math(command):
+    listt = ["calculate", "what is the value of", "value of", "perform", "evaluate", "find the value of", "find"]
+    for word in list:
+        if word in command:
+            return True
 
 # find on wikipedia
 def find_on_wikipedia(command):
@@ -58,7 +45,7 @@ def find_on_wikipedia(command):
         command = command.replace("is", "")
     
         query = command
-        sumry = wikipedia.summary(query, sentences=3)
+        sumry = wikipedia.summary(query, sentences=1)
         return sumry
 
     except Exception as e:
@@ -101,12 +88,9 @@ def resolve_command(command):
     else:
         pass
 
-    if "what is" in command:
-       	for word in ["plus", "minus", "by", "multiplied by", "multiply", "divided by", "to the power", "power"]:
-            if word in command:
-                command = command.replace("what is", "")
-                return basicOperations(command)
-                
+    if check_for_math(command) == True:
+        perform_math.perform(command)
+
     elif "what" in command or "where" in command or "who" in command:
         output = find_on_wikipedia(command)
         return output
@@ -119,7 +103,7 @@ def resolve_command(command):
 
     elif "download image" in command:
         webOpen.downloadImage(command)
-    
+
     elif "play" in command and ("youtube" in command or "yt" in command):
         webOpen.youtubeSearch(command)
 

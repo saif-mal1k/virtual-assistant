@@ -6,13 +6,19 @@ import resolveCommand
 #very useful especially when you have this module imported in another
 if __name__=="__main__":
     try:
-        speak("Hello, Sir. How you doing!")
-        speak("I am a virtual assistant. may I help you?")
+        speak("Hello Sir, may I help you?")
+
+        inputtype =  input("input type: ")
 
         while(True):
             print("enter command")
             # get command from user and resolve it
-            command = listen_input()
+
+            if inputtype == 'text':
+                command = input(">>")
+            
+            else:
+                command = listen_input()
 
             if command == "exit" or command == "okay bye" or command == "ok by":
                 speak("Bye Sir, See you soon!")
