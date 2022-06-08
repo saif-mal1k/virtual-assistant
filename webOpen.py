@@ -5,67 +5,13 @@ import threading
 import smtplib
 import urllib.request
 import os
-from geopy.geocoders import Nominatim
-from geopy.distance import great_circle
+
+# to download yt video
+from pytube import YouTube
 
 
 
-class WEATHER:
-	def __init__(self):
-		#Currently in Lucknow, its 26 with Haze
-		self.tempValue = ''
-		self.city = ''
-		self.currCondition = ''
-		self.speakResult = ''
-
-	def updateWeather(self):
-		res = requests.get("https://ipinfo.io/")
-		data = res.json()
-		# URL = 'https://weather.com/en-IN/weather/today/l/'+data['loc']
-		URL = 'https://weather.com/en-IN/weather/today/'
-		result = requests.get(URL)
-		src = result.content
-
-		soup = BeautifulSoup(src, 'html.parser')
-
-		city = "Ghaziabad"
-		for h in soup.find_all('h1'):
-			cty = h.text
-			cty = cty.replace('Weather', '')
-			self.city = cty[:cty.find(',')]
-			break
-
-		spans = soup.find_all('span')
-		for span in spans:
-			try:
-				if span['data-testid'] == "TemperatureValue":
-					self.tempValue = span.text[:-1]
-					break
-			except Exception as e:
-				pass
-
-		divs = soup.find_all('div', class_='CurrentConditions--phraseValue--2xXSr')
-		for div in divs:
-			self.currCondition = div.text
-			break
-
-	def weather(self):
-		from datetime import datetime
-		today = datetime.today().strftime('%A')
-		self.speakResult = "Currently in " + self.city + ", its " + \
-			self.tempValue + " degree, with a " + self.currCondition
-		return [self.tempValue, self.currCondition, today, self.city, self.speakResult]
-
-
-# instiating object to use methods
-w = WEATHER()
-
-def weather():
-	return w.weather()
-
-
-
-def latestNews(news=5):
+def latestNews(news=3):
 	URL = 'https://indianexpress.com/latest-news/'
 	result = requests.get(URL)
 	src = result.content
@@ -88,38 +34,6 @@ def latestNews(news=5):
 
 	return headlines
 
-
-def maps(text):
-	text = text.replace('maps', '')
-	text = text.replace('map', '')
-	text = text.replace('google', '')
-	openWebsite('https://www.google.com/maps/place/'+text)
-
-
-def giveDirections(startingPoint, destinationPoint):
-
-	geolocator = Nominatim(user_agent='assistant')
-	if 'current' in startingPoint:
-		res = requests.get("https://ipinfo.io/")
-		data = res.json()
-		startinglocation = geolocator.reverse(data['loc'])
-	else:
-		startinglocation = geolocator.geocode(startingPoint)
-
-	destinationlocation = geolocator.geocode(destinationPoint)
-	startingPoint = startinglocation.address.replace(' ', '+')
-	destinationPoint = destinationlocation.address.replace(' ', '+')
-
-	openWebsite('https://www.google.co.in/maps/dir/' +
-	            startingPoint+'/'+destinationPoint+'/')
-
-	startinglocationCoordinate = (
-		startinglocation.latitude, startinglocation.longitude)
-	destinationlocationCoordinate = (
-		destinationlocation.latitude, destinationlocation.longitude)
-	total_distance = great_circle(
-		startinglocationCoordinate, destinationlocationCoordinate).km  # .mile
-	return str(round(total_distance, 2)) + 'KM'
 
 
 def openWebsite(url='https://www.google.com/'):
@@ -174,6 +88,98 @@ def youtube(query):
 	webbrowser.open('https://www.youtube.com/watch?v=' + results[0]['id'])
 	return "Enjoy..."
 
+# for downloading yt video
+def get_itag(yt=None):
+    tag_audio = list(yt.streams.filter(only_audio=True))
+    tag_video = list(yt.streams.filter(file_extension='mp4'))
+
+    audio_itag = {}
+    video_itag = {}
+    video_itag_nosound = {}
+    all_res = []
+
+    i = 1
+    for stream in tag_audio:
+        stream = f'{stream}'
+        stream = stream.split(' ')
+        itag, abr = stream[1], stream[3]
+        itag_num = itag.split('"')[1]
+        abr_num = abr.split('"')[1]
+
+        audio_itag[i] = {abr_num: itag_num}
+        i += 1
+
+    j = 1
+    for stream in tag_video:
+        stream = f'{stream}'
+        stream = stream.split(' ')
+        itag, res, fps, pro = stream[1], stream[3], stream[4], stream[-2]
+
+        if 'True' in pro:
+            if 'res' in res:
+                itag_num = itag.split('"')[1]
+                res_num = res.split('"')[1]
+                fps_num = fps.split('"')[1]
+
+                video_itag[j] = {f'{res_num}-{fps_num}': itag_num}
+                j += 1
+
+        else:
+            if 'res' in res:
+                if res not in all_res:
+                    all_res.append(res)
+
+                    itag_num = itag.split('"')[1]
+                    res_num = res.split('"')[1]
+                    fps_num = fps.split('"')[1]
+
+                    video_itag_nosound[j] = {
+                        f'no-sound-{res_num}-{fps_num}': itag_num}
+                    j += 1
+
+    return audio_itag, video_itag, video_itag_nosound
+
+
+def download_by_itag(PATH, itag=None, type='mp4', yt=None, title=None):
+    stream = yt.streams.get_by_itag(itag)
+    if type == 'mp3':
+        stream.download(PATH, f'audio.{type}')
+    else:
+        stream.download(PATH, f'video.{type}')
+
+def downloadVideo(query):
+	query = query.replace('download', '')
+	query = query.replace('from youtube', '')
+	query = query.replace('from yt', '')
+
+	from youtubesearchpython import VideosSearch
+	videosSearch = VideosSearch(query, limit=1)
+	results = videosSearch.result()['result']
+	print("Finished searching!")
+
+	URL = 'https://www.youtube.com/watch?v=' + results[0]['id']
+
+	yt = YouTube(URL)
+
+	title = yt.title
+	print(f'!Downloading : {title}')
+	audio_itag, video_itag, video_itag_nosound = get_itag(yt)
+	save_title = query
+
+	qt = 2  # currently 720p resolution
+	if qt <= len(video_itag):
+		itag = int(list(video_itag[qt].values())[0])
+	else:
+		itag = int(list(video_itag_nosound[qt].values())[0])
+	
+	download = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Downloads')
+
+	PATH = os.path.join(download, title)
+	print(f'\ndownloading video.. {title}')
+	download_by_itag(PATH, itag, 'mp4', yt, 'video')
+
+	print('download successfull... check "Downloads" folder...')
+
 
 def googleSearch(query):
     if 'image' in query:
@@ -216,35 +222,6 @@ def downloadImage(query, n=2):
 			raise e
 
 
-def sendWhatsapp(phone_no='', message=''):
-	phone_no = '+91' + str(phone_no)
-	webbrowser.open('https://web.whatsapp.com/send?phone=' +
-	                phone_no+'&text='+message)
-	import time
-	from pynput.keyboard import Key, Controller
-	time.sleep(10)
-	k = Controller()
-	k.press(Key.enter)
-
-
-def email(rec_email=None, text="Hello, It's F.R.I.D.A.Y. here...", sub='F.R.I.D.A.Y.'):
-	USERNAME = os.getenv('MAIL_USERNAME')  # email address
-	PASSWORD = os.getenv('MAIL_PASSWORD')
-	if not USERNAME or not PASSWORD:
-		raise Exception(
-			"MAIL_USERNAME or MAIL_PASSWORD are not loaded in environment, create a .env file and add these 2 values")
-
-	if '@gmail.com' not in rec_email:
-		return
-	s = smtplib.SMTP('smtp.gmail.com', 587)
-	s.starttls()
-	s.login(USERNAME, PASSWORD)
-	message = 'Subject: {}\n\n{}'.format(sub, text)
-	s.sendmail(USERNAME, rec_email, message)
-	print("Sent")
-	s.quit()
-
-
 if __name__ == "__main__":
     #downloadImage('download images of cat')
     #googleSearch('search tom cruise on google')
@@ -252,10 +229,11 @@ if __name__ == "__main__":
     #openWebsiteByName('open apple website')
     #openWebsite()
     #print(weather())
+	downloadVideo('download rainy day short 30 sec animation video')
 
-    print(latestNews())
+    #print(latestNews())
 
-    #print(handleQuery("age of salman khan"))
+    #print(handleQuery("age of milky way"))
     #print(handleQuery("height of mount everest"))
     #print(handleQuery("when was Aryabhatta born"))
     #print(handleQuery("prime minister of india"))
