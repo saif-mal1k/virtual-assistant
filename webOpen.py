@@ -196,10 +196,10 @@ def googleSearch(query):
 
 
 def downloadImage(query, n=2):
+	query = query.replace('of', '')
 	query = query.replace('images', '')
 	query = query.replace('image', '')
-	query = query.replace('search', '')
-	query = query.replace('show', '')
+	query = query.replace('download', '')
 	URL = "https://www.google.com/search?tbm=isch&q=" + query
 	result = requests.get(URL)
 	src = result.content
@@ -217,9 +217,9 @@ def downloadImage(query, n=2):
 		try:
 			urllib.request.urlretrieve(i['src'], 'Downloads/' + str(count) + '.jpg')
 			count += 1
-			print('Downloaded', count)
 		except Exception as e:
 			raise e
+	print('Downloaded', count,'images')
 
 
 if __name__ == "__main__":
